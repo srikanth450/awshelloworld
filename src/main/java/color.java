@@ -1,106 +1,49 @@
-import java.awt.*;       // Using AWT's Graphics and Color
-import java.awt.event.*; // Using AWT's event classes and listener interface
-import javax.swing.*;    // Using Swing's components and containers
+import java.awt.*;        // Using AWT's Graphics and Color
+import java.awt.event.*;  // Using AWT's event classes and listener interfaces
+import javax.swing.*;     // Using Swing's components and containers
+
 /**
- * Custom Graphics Example: Using key/button to move a line left or right.
+ * An example of using ColorChooser to set the background
  */
 @SuppressWarnings("serial")
-public class CGMoveALine extends JFrame {
-    // Define constants for the various dimensions
-    public static final int CANVAS_WIDTH = 400;
-    public static final int CANVAS_HEIGHT = 140;
-    public static final Color LINE_COLOR = Color.BLACK;
-    public static final Color CANVAS_BACKGROUND = Color.CYAN;
+public class JColorChooserDemo extends JFrame {
+    JPanel panel;
+    Color bgColor = Color.LIGHT_GRAY;  // Panel's background color
 
-    // The moving line from (x1, y1) to (x2, y2), initially position at the center
-    private int x1 = CANVAS_WIDTH / 2;
-    private int y1 = CANVAS_HEIGHT / 8;
-    private int x2 = x1;
-    private int y2 = CANVAS_HEIGHT / 8 * 7;
+    // Constructor to setup the UI components and event handlers
+    public JColorChooserDemo() {
+        panel = new JPanel(new BorderLayout());
 
-    private DrawCanvas canvas; // The custom drawing canvas (an innder class extends JPanel)
-
-    // Constructor to set up the GUI components and event handlers
-    public CGMoveALine() {
-        // Set up a panel for the buttons
-        JPanel btnPanel = new JPanel(new FlowLayout());
-        JButton btnLeft = new JButton("Move Left ");
-        btnPanel.add(btnLeft);
-        btnLeft.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                x1 -= 10;
-                x2 -= 10;
-                canvas.repaint();
-                requestFocus(); // change the focus to JFrame to receive KeyEvent
-            }
-        });
-        JButton btnRight = new JButton("Move Right");
-        btnPanel.add(btnRight);
-        btnRight.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                x1 += 10;
-                x2 += 10;
-                canvas.repaint();
-                requestFocus(); // change the focus to JFrame to receive KeyEvent
-            }
-        });
-
-        // Set up a custom drawing JPanel
-        canvas = new DrawCanvas();
-        canvas.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
-
-        // Add both panels to this JFrame's content-pane
-        Container cp = getContentPane();
-        cp.setLayout(new BorderLayout());
-        cp.add(canvas, BorderLayout.CENTER);
-        cp.add(btnPanel, BorderLayout.SOUTH);
-
-        // "super" JFrame fires KeyEvent
-        addKeyListener(new KeyAdapter() {
+        JButton btnColor = new JButton("Change Color");
+        panel.add(btnColor, BorderLayout.SOUTH);
+        btnColor.addActionListener(new ActionListener() {
             @Override
-            public void keyPressed(KeyEvent evt) {
-                switch(evt.getKeyCode()) {
-                    case KeyEvent.VK_LEFT:
-                        x1 -= 10;
-                        x2 -= 10;
-                        repaint();
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        x1 += 10;
-                        x2 += 10;
-                        repaint();
-                        break;
+            public void actionPerformed(ActionEvent evt) {
+                Color color = JColorChooser.showDialog(JColorChooserDemo.this,
+                        "Choose a color", bgColor);
+                if (color != null) { // new color selected
+                    bgColor = color;
                 }
+                panel.setBackground(bgColor); // change panel's background color
             }
         });
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Handle the CLOSE button
-        setTitle("Move a Line");
-        pack();           // pack all the components in the JFrame
-        setVisible(true); // show it
-        requestFocus();   // set the focus to JFrame to receive KeyEvent
-    }
+        setContentPane(panel);
 
-    /**
-     * Define inner class DrawCanvas, which is a JPanel used for custom drawing.
-     */
-    class DrawCanvas extends JPanel {
-        @Override
-        public void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            setBackground(CANVAS_BACKGROUND);
-            g.setColor(LINE_COLOR);
-            g.drawLine(x1, y1, x2, y2); // Draw the line
-        }
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle("JColorChooser Demo");
+        setSize(300, 200);
+        setLocationRelativeTo(null);  // center the application window
+        setVisible(true);             // show it
     }
 
     // The entry main() method
     public static void main(String[] args) {
-        // Run GUI codes on the Event-Dispatcher Thread for thread safety
+        // Run GUI codes in the Event-Dispatching thread for thread safety
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new CGMoveALine(); // Let the constructor do the job
+                new JColorChooserDemo();  // Let the constructor do the job
             }
         });
     }
