@@ -43,7 +43,7 @@ public class JColorChooserDemo extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new JColorChooserDemo();  // Let the constructor do the job
+                new JColorChooserDemo();  // Let the constructor do the jobs
             }
         });
     }
